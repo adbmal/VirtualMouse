@@ -7,11 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#include "mouse.hpp"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        // insert code here...
-        NSLog(@"Hello, World!");
+        OSXScreen screen;
+        screen.updateScreenShape();
+        screen.hideCursor();
+        [[NSRunLoop currentRunLoop] run];
     }
     return 0;
 }
+
