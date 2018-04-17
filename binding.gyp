@@ -6,20 +6,20 @@
         "IScreen.cc",
         "screen.cc",
       ],
-      'link_settings': {
-        'libraries': [
-          '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
-        ],
-      },
       'conditions': [
           ['OS=="mac"', {
             'sources': [
               "OSXScreen.mm",
             ],
+            'link_settings': {
+              'libraries': [
+                '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
+              ],
+            },
           }],
           ['OS=="win"', {
-            'defines': [
-              'WINDOWS_SPECIFIC_DEFINE',
+            'sources': [
+              "MSScreen.cc",
             ],
           }, { # OS != "win",
             'defines': [
