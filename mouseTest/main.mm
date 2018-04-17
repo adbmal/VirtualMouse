@@ -11,11 +11,17 @@
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        OSXScreen screen;
-        screen.updateScreenShape();
-        screen.hideCursor();
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            OSXScreen screen;
+//            screen.updateScreenShape();
+//            screen.hideCursor();
+//            [[NSRunLoop currentRunLoop] run];
+        });
+//        int age;
+//        scanf("%d", &age);
         [[NSRunLoop currentRunLoop] run];
     }
     return 0;
 }
+
 

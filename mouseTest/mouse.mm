@@ -129,7 +129,8 @@ CGEventRef OSXScreen::handleCGInputEvent(CGEventTapProxy proxy,
 {
     OSXScreen* screen = (OSXScreen*)refcon;
     CGPoint pos;
-
+    CGKeyCode keycode = (CGKeyCode) CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+    NSLog(@"key code %d", keycode);
     switch(type) {
         case kCGEventLeftMouseDown:
         case kCGEventRightMouseDown:
@@ -165,9 +166,13 @@ CGEventRef OSXScreen::handleCGInputEvent(CGEventTapProxy proxy,
 //                                                                 CGEventGetIntegerValueField(event, kCGScrollWheelEventDeltaAxis1)));
             break;
         case kCGEventKeyDown:
+            NSLog(@"kCGEventKeyDown");
+            break;
         case kCGEventKeyUp:
+            NSLog(@"kCGEventKeyUp");
+            break;
         case kCGEventFlagsChanged:
-            NSLog(@"onKey");
+            NSLog(@"kCGEventFlagsChanged");
             //            screen->onKey(event);
             break;
         case kCGEventTapDisabledByTimeout:
@@ -182,13 +187,13 @@ CGEventRef OSXScreen::handleCGInputEvent(CGEventTapProxy proxy,
             break;
         default:
             if (type == NX_SYSDEFINED) {
-                //                if (isMediaKeyEvent (event)) {
-                //                    LOG((CLOG_DEBUG2 "detected media key event"));
-                //                    screen->onMediaKey (event);
-                //                } else {
-                //                    LOG((CLOG_DEBUG2 "ignoring unknown system defined event"));
-                //                    return event;
-                //                }
+                if (screen->isMediaKeyEvent (event)) {
+                    NSLog(@"detected media key event");
+//                    screen->onMediaKey (event);
+                } else {
+                    NSLog(@"ignoring unknown system defined event");
+                    return event;
+                }
                 break;
             }
             
@@ -330,4 +335,20 @@ OSXScreen::onMouseWheel(SInt32 xDelta, SInt32 yDelta) const
     NSLog(@"event: button wheel delta=%+d,%+d", xDelta, yDelta);
 //    sendEvent(m_events->forIPrimaryScreen().wheel(), WheelInfo::alloc(xDelta, yDelta));
     return true;
+}
+
+bool OSXScreen::isMediaKeyEvent(CGEventRef event) {
+    NSEvent* nsEvent = nil;
+    @try {
+        nsEvent = [NSEvent eventWithCGEvent: event];
+        if ([nsEvent subtype] != 8) {
+            return false;
+        }
+        uint32_t const nxKeyId = ([nsEvent data1] & 0xFFFF0000) >> 16;
+//        if (convertNXKeyTypeToKeyID (nxKeyId)) {
+            return true;
+//        }
+    } @catch (NSException* e) {
+    }
+    return false;
 }

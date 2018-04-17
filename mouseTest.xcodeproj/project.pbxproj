@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		08B929912079F50D009C0ACD /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08B929902079F50D009C0ACD /* AppKit.framework */; };
 		815D19D6207798400082C999 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 815D19D5207798400082C999 /* main.mm */; };
 		815D19DE20779DE50082C999 /* mouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 815D19DC20779DE50082C999 /* mouse.mm */; };
 		815D19E12077A0FA0082C999 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 815D19E02077A0FA0082C999 /* CoreGraphics.framework */; };
@@ -25,6 +26,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		08B9298E2079F4F3009C0ACD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		08B929902079F50D009C0ACD /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		815D19D2207798400082C999 /* mouseTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mouseTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		815D19D5207798400082C999 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		815D19DC20779DE50082C999 /* mouse.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = mouse.mm; sourceTree = "<group>"; };
@@ -37,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08B929912079F50D009C0ACD /* AppKit.framework in Frameworks */,
 				815D19E12077A0FA0082C999 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +78,8 @@
 		815D19DF2077A0F90082C999 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				08B929902079F50D009C0ACD /* AppKit.framework */,
+				08B9298E2079F4F3009C0ACD /* CoreFoundation.framework */,
 				815D19E02077A0FA0082C999 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
@@ -251,7 +257,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7D423R3B64;
+				DEVELOPMENT_TEAM = A7UV23Q52S;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -260,7 +267,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7D423R3B64;
+				DEVELOPMENT_TEAM = A7UV23Q52S;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

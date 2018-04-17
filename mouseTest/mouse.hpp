@@ -48,6 +48,9 @@ public:
     bool                onMouseWheel(SInt32 xDelta, SInt32 yDelta) const;
 
     
+
+    bool isMediaKeyEvent(CGEventRef event);
+    
     void hideCursor();
     virtual ~OSXScreen();
     
