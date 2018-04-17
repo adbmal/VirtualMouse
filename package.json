@@ -1,0 +1,11 @@
+{
+  "name": "virtual_mouse",
+  "version": "0.0.0",
+  "description": "Mouse and Keyboard",
+  "main": "index.js",
+  "private": true,
+  "gypfile": true,
+  "dependencies": {
+    "nan": "*"
+  }
+}
