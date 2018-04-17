@@ -94,16 +94,33 @@ NAN_METHOD(stop) {
     }
 }
 
+NAN_METHOD(setCursorVisible) {
+    if (screen) {
+        bool show = info[0]->BooleanValue();
+        screen->setCursorVisible(show);
+    }
+}
+
+NAN_METHOD(warpCursor) {
+    if (screen) {
+        int x = info[0]->Int32Value();
+        int y = info[1]->Int32Value();
+        screen->warpCursor(x, y);
+    }
+}
+
 NAN_MODULE_INIT(InitAll) {
     screen = IScreen::getScreen();
-
     Set(target, New<String>("getShape").ToLocalChecked(),
         GetFunction(New<FunctionTemplate>(getShape)).ToLocalChecked());
-
     Set(target, New<v8::String>("start").ToLocalChecked(),
         New<v8::FunctionTemplate>(start)->GetFunction());
     Set(target, New<v8::String>("stop").ToLocalChecked(),
         New<v8::FunctionTemplate>(stop)->GetFunction());
+    Set(target, New<v8::String>("setCursorVisible").ToLocalChecked(),
+        New<v8::FunctionTemplate>(setCursorVisible)->GetFunction());
+    Set(target, New<v8::String>("warpCursor").ToLocalChecked(),
+        New<v8::FunctionTemplate>(warpCursor)->GetFunction());
 
 }
 

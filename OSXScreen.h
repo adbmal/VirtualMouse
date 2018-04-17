@@ -33,6 +33,8 @@ public:
     virtual void getCursorPos(int& x, int& y) const;
     virtual void run();
     virtual void stop();
+    virtual void setCursorVisible(bool);
+    virtual void warpCursor(int x, int y);
 
 
     // message handlers
@@ -54,9 +56,10 @@ private:
     CGDirectDisplayID    m_displayID;
 
     // screen shape stuff
-    int                m_x, m_y;
-    int                m_w, m_h;
-    int                m_xCenter, m_yCenter;
+    int m_x, m_y;
+    int m_w, m_h;
+    int m_xCenter, m_yCenter;
+    bool m_cursorShow;
 
     // mouse state
     mutable int        m_xCursor, m_yCursor;

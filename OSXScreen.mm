@@ -309,10 +309,47 @@ OSXScreen::onMouseButton(bool pressed, UInt16 macButton)
     return true;
 }
 
-bool
-OSXScreen::onMouseWheel(SInt32 xDelta, SInt32 yDelta) const
+bool OSXScreen::onMouseWheel(SInt32 xDelta, SInt32 yDelta) const
 {
     NSLog(@"event: button wheel delta=%+d,%+d", xDelta, yDelta);
 //    sendEvent(m_events->forIPrimaryScreen().wheel(), WheelInfo::alloc(xDelta, yDelta));
     return true;
+}
+
+void OSXScreen::setCursorVisible(bool show) {
+
+	CFStringRef propertyString = CFStringCreateWithCString(NULL, "SetsCursorInBackground", kCFStringEncodingMacRoman);
+
+	CGSSetConnectionProperty(
+		_CGSDefaultConnection(), _CGSDefaultConnection(),
+		propertyString, kCFBooleanTrue);
+
+	CFRelease(propertyString);
+	m_cursorShow = show;
+
+	CGError error;
+	if (m_cursorShow) {
+		error = CGDisplayShowCursor(m_displayID);
+	} else {
+	    error = CGDisplayHideCursor(m_displayID);
+	}
+	if (error != kCGErrorSuccess) {
+		NSLog(@"failed to show cursor, error=%d", error);
+	}
+	// appears to fix "mouse randomly not showing" bug
+	CGAssociateMouseAndMouseCursorPosition(true);
+}
+
+
+void OSXScreen::warpCursor(int x, int y)
+{
+	CGPoint pos;
+	pos.x = x;
+	pos.y = y;
+	CGWarpMouseCursorPosition(pos);
+	
+	// save new cursor position
+	m_xCursor        = x;
+	m_yCursor        = y;
+	// m_cursorPosValid = true;
 }
