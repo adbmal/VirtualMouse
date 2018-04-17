@@ -3,7 +3,6 @@
     {
       "target_name": "screen",
       "sources": [
-        "OSXScreen.mm",
         "IScreen.cc",
         "screen.cc",
       ],
@@ -12,6 +11,22 @@
           '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
         ],
       },
+      'conditions': [
+          ['OS=="mac"', {
+            'sources': [
+              "OSXScreen.mm",
+            ],
+          }],
+          ['OS=="win"', {
+            'defines': [
+              'WINDOWS_SPECIFIC_DEFINE',
+            ],
+          }, { # OS != "win",
+            'defines': [
+              'NON_WINDOWS_DEFINE',
+            ],
+          }]
+      ],
       "include_dirs": ["<!(node -e \"require('nan')\")"]
     }
   ]
