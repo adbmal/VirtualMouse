@@ -27,37 +27,55 @@ public:
         , m_mouseMove(mouseMove){
 
     }
-
     ~ScreenHook() {
         delete m_updateShape;
         delete m_mouseMove;
     }
+    typedef struct CallbackEvent {
+        enum EventType { Shape, MouseMove} event;
+        float x, y;
+        int width, height;
+    } CallbackEvent;
 
     void Execute (const AsyncProgressWorker::ExecutionProgress& progress) {
         m_progress = &progress;
-        for (int i = 0; i < 2; ++i) {
-            progress.Send(reinterpret_cast<const char*>(&i), sizeof(int));
-        }
         screen->run();
     }
 
-    virtual void onShapeUpdate(int x, int y, int w, int h) {
-
+    virtual void onShapeUpdate(int w, int h) {
+        CallbackEvent e = {CallbackEvent::Shape, 0, 0, w, h};
+        m_progress->Send(reinterpret_cast<const char*>(&e), sizeof(e));
     }
     virtual void onMouseMove(float x, float y) {
-        float data[2] = {x, y};
-        m_progress->Send(reinterpret_cast<const char*>(&data[0]), 2*sizeof(float));
+        CallbackEvent e = {CallbackEvent::MouseMove, x, y, 0, 0};
+        m_progress->Send(reinterpret_cast<const char*>(&e), sizeof(e));
     }
 
     void HandleProgressCallback(const char *data, size_t count) {
         HandleScope scope;
-        float *position = reinterpret_cast<float*>(const_cast<char*>(data));
-
-        v8::Local<v8::Value> argv[] = {
-            New<v8::Number>(position[0]),
-            New<v8::Number>(position[1])
-        };
-        m_mouseMove->Call(2, argv, async_resource);
+        CallbackEvent *e = reinterpret_cast<CallbackEvent*>(const_cast<char*>(data));
+        switch (e->event) {
+        case CallbackEvent::Shape:
+        {
+            v8::Local<v8::Value> argv[] = {
+                New<v8::Uint32>(e->width),
+                New<v8::Uint32>(e->height)
+            };
+            m_mouseMove->Call(2, argv, async_resource);
+            break;
+        }
+        case CallbackEvent::MouseMove:
+        {
+            v8::Local<v8::Value> argv[] = {
+                New<v8::Number>(e->x),
+                New<v8::Number>(e->y)
+            };
+            m_mouseMove->Call(2, argv, async_resource);
+            break;
+        }
+        default:
+            break;
+        }
     }
 
 private:
@@ -67,14 +85,12 @@ private:
 };
 
 NAN_METHOD(getShape) {
-    int x, y, w, h;
+    int w, h;
     if (screen) {
-        screen->getShape(x, y, w, h);
-        Local<Array> shape = New<v8::Array>(4);
-        Nan::Set(shape, 0, Nan::New(x));
-        Nan::Set(shape, 1, Nan::New(y));
-        Nan::Set(shape, 2, Nan::New(w));
-        Nan::Set(shape, 3, Nan::New(h));
+        screen->getShape(w, h);
+        Local<Object> shape = New<Object>();
+        Set(shape, New<String>("width").ToLocalChecked(),Nan::New(w));
+        Set(shape, New<String>("height").ToLocalChecked(),Nan::New(h));
         info.GetReturnValue().Set(shape); 
     }
 }

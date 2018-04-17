@@ -7,11 +7,16 @@ IScreen* IScreen::getScreen() {
 
 OSXScreen::OSXScreen() {
     updateScreenShape();
+	
+	// install display manager notification handler
+	CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallback, this);
+
+}
+OSXScreen::~OSXScreen() {
+	CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallback, this);
 }
 
-void OSXScreen::getShape(int& x, int& y, int& w, int& h) const {
-	x = m_x;
-	y = m_y;
+void OSXScreen::getShape(int& w, int& h) const {
 	w = m_w;
 	h = m_h;
 }
@@ -84,10 +89,10 @@ OSXScreen::updateScreenShape()
 	m_h = (SInt32)totalBounds.size.height;
 
 	// get center of default screen
-  CGDirectDisplayID main = CGMainDisplayID();
-  const CGRect rect = CGDisplayBounds(main);
-  m_xCenter = (rect.origin.x + rect.size.width) / 2;
-  m_yCenter = (rect.origin.y + rect.size.height) / 2;
+	CGDirectDisplayID main = CGMainDisplayID();
+	const CGRect rect = CGDisplayBounds(main);
+	m_xCenter = (rect.origin.x + rect.size.width) / 2;
+	m_yCenter = (rect.origin.y + rect.size.height) / 2;
 
 	delete[] displays;
 	// We want to notify the peer screen whether we are primary screen or not
@@ -96,7 +101,9 @@ OSXScreen::updateScreenShape()
 	// LOG((CLOG_DEBUG "screen shape: center=%d,%d size=%dx%d on %u %s",
     //      m_x, m_y, m_w, m_h, displayCount,
     //      (displayCount == 1) ? "display" : "displays"));
-
+	if (m_handle) {
+		m_handle->onShapeUpdate(m_w, m_h);
+	}
     return true;
 }
 
@@ -352,4 +359,27 @@ void OSXScreen::warpCursor(int x, int y)
 	m_xCursor        = x;
 	m_yCursor        = y;
 	// m_cursorPosValid = true;
+}
+
+
+void OSXScreen::displayReconfigurationCallback(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void* inUserData)
+{
+	OSXScreen* screen = (OSXScreen*)inUserData;
+
+	// Closing or opening the lid when an external monitor is
+    // connected causes an kCGDisplayBeginConfigurationFlag event
+	CGDisplayChangeSummaryFlags mask = kCGDisplayBeginConfigurationFlag | kCGDisplayMovedFlag | 
+		kCGDisplaySetModeFlag | kCGDisplayAddFlag | kCGDisplayRemoveFlag | 
+		kCGDisplayEnabledFlag | kCGDisplayDisabledFlag | 
+		kCGDisplayMirrorFlag | kCGDisplayUnMirrorFlag | 
+		kCGDisplayDesktopShapeChangedFlag;
+ 
+	NSLog(@"event: display was reconfigured: %x %x %x", flags, mask, flags & mask);
+
+	if (flags & mask) { /* Something actually did change */
+		NSLog(@"event: screen changed shape; refreshing dimensions");
+        if (!screen->updateScreenShape()) {
+            NSLog(@"failed to update screen shape during display reconfiguration");
+        }
+	}
 }

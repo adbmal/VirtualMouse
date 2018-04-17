@@ -2,7 +2,7 @@
 
 class ScreenHandle {
 public:
-    virtual void onShapeUpdate(int x, int y, int w, int h) = 0;
+    virtual void onShapeUpdate(int w, int h) = 0;
     virtual void onMouseMove(float x, float y) = 0;
 };
 
@@ -19,8 +19,7 @@ public:
     /*!
     Return the position of the upper-left corner of the screen in x and y and the size of the screen in width and height.
     */
-    virtual void getShape(int& x, int& y,
-                            int& width, int& height) const = 0;
+    virtual void getShape(int& width, int& height) const = 0;
 
     //! Get cursor position
     /*!

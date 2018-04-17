@@ -27,8 +27,8 @@ extern "C" {
 class OSXScreen : public IScreen {
 public:
     OSXScreen();
-    virtual void getShape(int& x, int& y,
-                          int& width, int& height) const;
+    ~OSXScreen();
+    virtual void getShape(int& width, int& height) const;
 
     virtual void getCursorPos(int& x, int& y) const;
     virtual void run();
@@ -50,8 +50,13 @@ public:
                                             CGEventType type,
                                             CGEventRef event,
                                             void* refcon);
+
+    // Resolution switch callback
+    static void displayReconfigurationCallback(CGDirectDisplayID,
+                            CGDisplayChangeSummaryFlags, void*);
 private:
     bool updateScreenShape();
+    
     // the display
     CGDirectDisplayID    m_displayID;
 

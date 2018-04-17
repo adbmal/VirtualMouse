@@ -35,7 +35,7 @@ setTimeout(function() {
         console.log("update shape", x, y, w, h)
     }, function(x, y) {
         console.log("mouse move", x, y)
-    }, function(m, n) {
-        console.log("callbacke", m, n)
+    }, function() {
+        console.log("end")
     });
 }, 1500)
